@@ -1,0 +1,72 @@
+config:
+  # Authentication
+  github_token: ~
+  # User
+  user: ~
+  # Defaults
+  # defaults:
+    # client_name: ~
+    # project_name: default-project
+    # project_type: application
+    # description: This is a default project
+    # visibility: private
+    # main_branch: main
+    # contributors:
+      # - user1
+      # - user2
+  # Repository
+  project_types:
+    - component
+    - bundle
+    - application
+    - template
+    - issues-tracker
+  # Branches
+  main_branch: ~
+  develop_branch: develop
+  branches:
+    - main
+    - develop
+  # Labels
+  labels:
+    - {name: ':whale2: Docker', color: 'FF5733', description: 'A Docker file has been added or modified'}
+    - {name: ':card_index_dividers: DI', color: 'EC7063', description: 'A composer or package file has been added or modified'}
+    - {name: ':left_luggage: Fixtures', color: '85C1E9', description: 'Fixtures have been added or modified'}
+    - {name: ':shield: Tests', color: '7DCEA0', description: 'Tests have been added or modified'}
+    - {name: ':wrench: Tools', color: '2E86C1', description: 'Tools have been added or modified'}
+    - {name: ':arrow_forward: Deployment', color: '884EA0', description: 'Deployment files have been added or modified'}
+    - {name: ':green_book: Docs', color: 'F5B041', description: 'Documentation has been added or modified'}
+    - {name: ':balance_scale: CI', color: 'D35400', description: 'CI files have been added or modified'}
+    - {name: ':lock: Migrations', color: 'BA4A00', description: 'Database migrations have been added or modified'}
+    - {name: ':tv: Front', color: '7DCEA0', description: 'Related to the front'}
+    - {name: ':electric_plug: API', color: 'F1948A', description: 'Related to the API'}
+    - {name: ':computer: Back', color: 'F7DC6F', description: 'Related to the back'}
+    - {name: ':atom_symbol: Pull request', color: '16A085', description: 'A PR has been opened'}
+    - {name: ':test_tube: To Test (internal)', color: 'D98880', description: 'To be tested (internal)'}
+    - {name: ':memo: To Test (customer)', color: 'F1C40F', description: 'To be tested (customer)'}
+  # Template
+  enable_no_template: true
+  templates:
+    # To create a new repository in an organization, the authenticated user must be a member of the specified organization.
+    # https://docs.github.com/fr/rest/repos/repos?apiVersion=2022-11-28#create-a-repository-using-a-template
+    #- { name: atournayre/default-template, include_all_branches: true }
+  # Files
+  files:
+    - docs/CONTRIBUTORS.md
+    - docs/DEPLOY.md
+    - docs/DEVELOP.md
+    - docs/FAQ.md
+    - docs/INSTALL.md
+    - docs/ISSUES.md
+    - docs/MAINTAINERS.md
+    - docs/ROADMAP.md
+    - docs/SECURITY.md
+    - docs/TEST.md
+    - docs/TODO.md
+    - docs/UPGRADE.md
+    - docs/USAGE.md
+    - CHANGELOG.md
+    - CODE_OF_CONDUCT.md
+    - CONTRIBUTING.md
+    - LICENSE
+    - README.md
