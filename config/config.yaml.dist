@@ -29,21 +29,21 @@ config:
     - develop
   # Labels
   labels:
-    - {name: ':whale2: Docker', color: 'FF5733', description: 'A Docker file has been added or modified'}
-    - {name: ':card_index_dividers: DI', color: 'EC7063', description: 'A composer or package file has been added or modified'}
-    - {name: ':left_luggage: Fixtures', color: '85C1E9', description: 'Fixtures have been added or modified'}
-    - {name: ':shield: Tests', color: '7DCEA0', description: 'Tests have been added or modified'}
-    - {name: ':wrench: Tools', color: '2E86C1', description: 'Tools have been added or modified'}
-    - {name: ':arrow_forward: Deployment', color: '884EA0', description: 'Deployment files have been added or modified'}
-    - {name: ':green_book: Docs', color: 'F5B041', description: 'Documentation has been added or modified'}
-    - {name: ':balance_scale: CI', color: 'D35400', description: 'CI files have been added or modified'}
-    - {name: ':lock: Migrations', color: 'BA4A00', description: 'Database migrations have been added or modified'}
-    - {name: ':tv: Front', color: '7DCEA0', description: 'Related to the front'}
-    - {name: ':electric_plug: API', color: 'F1948A', description: 'Related to the API'}
-    - {name: ':computer: Back', color: 'F7DC6F', description: 'Related to the back'}
-    - {name: ':atom_symbol: Pull request', color: '16A085', description: 'A PR has been opened'}
-    - {name: ':test_tube: To Test (internal)', color: 'D98880', description: 'To be tested (internal)'}
-    - {name: ':memo: To Test (customer)', color: 'F1C40F', description: 'To be tested (customer)'}
+    - {name: 'docker', color: 'FF5733', description: 'A Docker file has been added or modified'}
+    - {name: 'dependencies', color: 'EC7063', description: 'A composer or package file has been added or modified'}
+    - {name: 'fixtures', color: '85C1E9', description: 'Fixtures have been added or modified'}
+    - {name: 'tests', color: '7DCEA0', description: 'Tests have been added or modified'}
+    - {name: 'tools', color: '2E86C1', description: 'Tools have been added or modified'}
+    - {name: 'deployment', color: '884EA0', description: 'Deployment files have been added or modified'}
+    - {name: 'docs', color: 'F5B041', description: 'Documentation has been added or modified'}
+    - {name: 'ci', color: 'D35400', description: 'CI files have been added or modified'}
+    - {name: 'migrations', color: 'BA4A00', description: 'Database migrations have been added or modified'}
+    - {name: 'front', color: '7DCEA0', description: 'Related to the front'}
+    - {name: 'api', color: 'F1948A', description: 'Related to the API'}
+    - {name: 'back', color: 'F7DC6F', description: 'Related to the back'}
+    - {name: 'pull request', color: '16A085', description: 'A PR has been opened'}
+    - {name: 'to test (internal)', color: 'D98880', description: 'To be tested (internal)'}
+    - {name: 'to test (customer)', color: 'F1C40F', description: 'To be tested (customer)'}
   # Template
   enable_no_template: true
   templates:
@@ -59,7 +59,6 @@ config:
     - docs/INSTALL.md
     - docs/ISSUES.md
     - docs/MAINTAINERS.md
-    - docs/ROADMAP.md
     - docs/SECURITY.md
     - docs/TEST.md
     - docs/TODO.md
