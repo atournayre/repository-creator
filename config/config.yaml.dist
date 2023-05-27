@@ -54,6 +54,10 @@ config:
     #- { name: atournayre/default-template, include_all_branches: true }
   # Files
   files:
+    - .github/dependabot.yml
+    - .github/ISSUE_TEMPLATE/BUG-REPORT.yml
+    - .github/ISSUE_TEMPLATE/config.yml
+    - .github/ISSUE_TEMPLATE/FEATURE-REQUEST.yml
     - docs/CONTRIBUTORS.md
     - docs/DEPLOY.md
     - docs/DEVELOP.md

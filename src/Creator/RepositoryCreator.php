@@ -59,6 +59,8 @@ readonly class RepositoryCreator
         $this->addLabels($repository);
         $this->addContributors($repository);
         $this->addMilestones($repository);
+        $this->enableAutomatedVulnerabilityAlerts($repository);
+        $this->enableAutomatedSecurityFixes($repository);
     }
 
     private function createRepository(Repository $repository): void
@@ -174,5 +176,21 @@ readonly class RepositoryCreator
                 $milestone->toArray(),
             );
         }
+    }
+
+    public function enableAutomatedSecurityFixes(Repository $repository): void
+    {
+        $this->client->repository()->enableAutomatedSecurityFixes(
+            $this->configuration->user,
+            $repository->getName(),
+        );
+    }
+
+    public function enableAutomatedVulnerabilityAlerts(Repository $repository): void
+    {
+        $this->client->repository()->enableVulnerabilityAlerts(
+            $this->configuration->user,
+            $repository->getName(),
+        );
     }
 }
