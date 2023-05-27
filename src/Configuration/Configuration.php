@@ -11,34 +11,35 @@ readonly class Configuration
     public const VISIBILITY_PRIVATE = 'private';
     public const NO_TEMPLATE = 'No template';
 
-    public string $locale;
-    public string $githubToken;
-    public string $user;
-
-    // Defaults
-    public ?string $defaultClientName;
-    public ?string $defaultProjectName;
-    public ?string $defaultProjectType;
-    public ?string $defaultDescription;
-    public ?string $defaultVisibility;
-    public ?string $defaultMainBranch;
-    public array $defaultContributors;
-    public array $projectTypes;
-    public string $mainBranch;
-    public string $developBranch;
-    public array $branches;
-    public array $labels;
-    public array $templates;
-    public array $visibilities;
-    public array $files;
-    public array $milestones;
-
-    public function __construct()
+    private function __construct(
+            public string $locale,
+            public string $githubToken,
+            public string $user,
+            public ?string $defaultClientName,
+            public ?string $defaultProjectName,
+            public ?string $defaultProjectType,
+            public ?string $defaultDescription,
+            public ?string $defaultVisibility,
+            public ?string $defaultMainBranch,
+            public array $defaultContributors,
+            public array $projectTypes,
+            public string $mainBranch,
+            public string $developBranch,
+            public array $branches,
+            public array $labels,
+            public array $templates,
+            public array $visibilities,
+            public array $files,
+            public array $milestones,
+    )
     {
-        $configFile = __DIR__ . '/../../config/config.yaml';
+    }
+
+    public static function load(string $configFile): self
+    {
         Assert::file($configFile, 'The config file does not exist.');
 
-        $config = Yaml::parseFile($configFile)['config'];
+        $config = Yaml::parseFile($configFile)['create_repository'];
 
         Assert::keyExists($config, 'github_token');
         Assert::notNull($config['github_token'], 'The github_token cannot be null, please set it in the config file.');
@@ -70,25 +71,27 @@ readonly class Configuration
             );
         }
 
-        $this->locale = $config['locale'] ?? 'en';
-        $this->githubToken = $config['github_token'];
-        $this->user = $config['user'];
-        $this->defaultClientName = $config['defaults']['client_name'] ?? null;
-        $this->defaultProjectName = $config['defaults']['project_name'] ?? null;
-        $this->defaultProjectType = $config['defaults']['project_type'] ?? null;
-        $this->defaultDescription = $config['defaults']['description'] ?? null;
-        $this->defaultVisibility = $config['defaults']['visibility'] ?? null;
-        $this->defaultMainBranch = $config['defaults']['main_branch'] ?? null;
-        $this->projectTypes = $config['project_types'];
-        $this->defaultContributors = $config['defaults']['contributors'] ?? [];
-        $this->mainBranch = $config['main_branch'];
-        $this->developBranch = $config['develop_branch'];
-        $this->branches = $config['branches'] ?? [];
-        $this->labels = $config['labels'] ?? [];
-        $this->files = $config['files'] ?? [];
-        $this->milestones = $config['milestones'] ?? [];
-        $this->templates = $templates;
-        $this->visibilities = $visibilities;
+        return new self(
+            $config['locale'] ?? 'en',
+            $config['github_token'],
+            $config['user'],
+            $config['defaults']['client_name'] ?? null,
+            $config['defaults']['project_name'] ?? null,
+            $config['defaults']['project_type'] ?? null,
+            $config['defaults']['description'] ?? null,
+            $config['defaults']['visibility'] ?? null,
+            $config['defaults']['main_branch'] ?? null,
+            $config['defaults']['contributors'] ?? [],
+            $config['project_types'],
+            $config['main_branch'],
+            $config['develop_branch'],
+            $config['branches'] ?? [],
+            $config['labels'] ?? [],
+            $config['templates'] ?? [],
+            $visibilities,
+            $config['files'] ?? [],
+            $config['milestones'] ?? [],
+        );
     }
 
     public function getDefaultTemplate(): string

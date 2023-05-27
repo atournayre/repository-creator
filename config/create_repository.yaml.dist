@@ -1,4 +1,4 @@
-config:
+create_repository:
   # Locale
   locale: en
   # Authentication

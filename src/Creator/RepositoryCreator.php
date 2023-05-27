@@ -14,7 +14,7 @@ readonly class RepositoryCreator
 {
     private Client $client;
 
-    public function __construct(
+    private function __construct(
         private ClientInterface $httplugClient,
         private Configuration   $configuration,
     )
@@ -25,6 +25,24 @@ readonly class RepositoryCreator
             null,
             AuthMethod::ACCESS_TOKEN
         );
+    }
+
+    public static function instantiate(ClientInterface $httplugClient, Configuration $configuration): self
+    {
+        return new self($httplugClient, $configuration);
+    }
+
+    public function create(Repository $repository): void
+    {
+        $repositoryCreator = clone $this;
+        $repositoryCreator->createRepository($repository);
+        $repositoryCreator->addFiles($repository);
+        $repositoryCreator->addBranches($repository);
+        $repositoryCreator->addLabels($repository);
+        $repositoryCreator->addContributors($repository);
+        $repositoryCreator->addMilestones($repository);
+        $repositoryCreator->enableAutomatedVulnerabilityAlerts($repository);
+        $repositoryCreator->enableAutomatedSecurityFixes($repository);
     }
 
     private function doCreateRepository(Repository $repository): void
@@ -49,18 +67,6 @@ readonly class RepositoryCreator
             $this->configuration->user,
             $repository->getName()
         );
-    }
-
-    public function create(Repository $repository): void
-    {
-        $this->createRepository($repository);
-        $this->addFiles($repository);
-        $this->addBranches($repository);
-        $this->addLabels($repository);
-        $this->addContributors($repository);
-        $this->addMilestones($repository);
-        $this->enableAutomatedVulnerabilityAlerts($repository);
-        $this->enableAutomatedSecurityFixes($repository);
     }
 
     private function createRepository(Repository $repository): void
