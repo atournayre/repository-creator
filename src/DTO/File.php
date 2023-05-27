@@ -16,9 +16,9 @@ readonly class File
     {
     }
 
-    public static function fromPath(string $path): self
+    public static function fromPath(string $path, string $locale): self
     {
-        $fullPath = __DIR__ . '/../../templates/' . $path;
+        $fullPath = sprintf('%s/../../templates/%s/%s', __DIR__, $locale, $path);
         Assert::file($fullPath, sprintf('The file "%s" does not exist.', $path));
         $file = new self($path, file_get_contents($fullPath));
         $file->isGitHub = false;
@@ -34,10 +34,10 @@ readonly class File
         return $file;
     }
 
-    public static function create($path, ?string $content): self
+    public static function create($path, string $locale, ?string $content): self
     {
         if (null === $content) {
-            return self::fromPath($path);
+            return self::fromPath($path, $locale);
         }
         return new self($path, $content);
     }

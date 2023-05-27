@@ -1,4 +1,6 @@
 config:
+  # Locale
+  locale: en
   # Authentication
   github_token: ~
   # User

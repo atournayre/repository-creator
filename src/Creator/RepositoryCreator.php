@@ -96,7 +96,7 @@ readonly class RepositoryCreator
                 $gitHubUrlParser->repository,
                 $gitHubUrlParser->path
             );
-            $githubFiles[$file->path] = File::create($file->path, $content);
+            $githubFiles[$file->path] = File::create($file->path, $this->configuration->locale, $content);
         }
 
         $files = array_merge($repository->getFiles(), $githubFiles);

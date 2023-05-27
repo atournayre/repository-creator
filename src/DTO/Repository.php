@@ -75,7 +75,7 @@ class Repository
         $this->contributors[] = $contributor;
     }
 
-    public function withFile(string|array $name): self
+    public function withFile(string|array $name, string $locale): self
     {
         $repository = clone $this;
 
@@ -84,7 +84,7 @@ class Repository
             return $repository;
         }
 
-        $repository->addFile(File::fromPath($name));
+        $repository->addFile(File::fromPath($name, $locale));
         return $repository;
     }
 
@@ -150,11 +150,11 @@ class Repository
         return $repository;
     }
 
-    public function withFiles(array $files): self
+    public function withFiles(array $files, string $locale): self
     {
         $repository = clone $this;
         foreach ($files as $file) {
-            $repository = $repository->withFile($file);
+            $repository = $repository->withFile($file, $locale);
         }
 
         return $repository;

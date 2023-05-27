@@ -11,6 +11,7 @@ readonly class Configuration
     public const VISIBILITY_PRIVATE = 'private';
     public const NO_TEMPLATE = 'No template';
 
+    public string $locale;
     public string $githubToken;
     public string $user;
 
@@ -67,6 +68,7 @@ readonly class Configuration
             );
         }
 
+        $this->locale = $config['locale'] ?? 'en';
         $this->githubToken = $config['github_token'];
         $this->user = $config['user'];
         $this->defaultClientName = $config['defaults']['client_name'] ?? null;
