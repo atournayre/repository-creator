@@ -28,7 +28,7 @@ readonly class File
 
     public static function fromUrl(string $path, string $url): self
     {
-        $file = new self($path, file_get_contents($url));
+        $file = new self($path, '');
         $file->isGitHub = str_contains($url, 'github.com');
         $file->fullPath = $url;
         return $file;

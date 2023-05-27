@@ -160,10 +160,10 @@ class Repository
         return $repository;
     }
 
-    public function withContributors(array $defaultContributors): self
+    public function withContributors(array $contributors): self
     {
         $repository = clone $this;
-        foreach ($defaultContributors as $contributor) {
+        foreach ($contributors as $contributor) {
             $repository = $repository->withContributor($contributor);
         }
 
