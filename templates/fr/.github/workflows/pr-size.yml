@@ -1,0 +1,13 @@
+name: Ajout automatique de label en fonction de la taille de la PR
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  label-pr-based-on-size:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ajout de label en fonction des fichiers modifiés
+        uses: TDAK1509/label-pr-based-on-files-changed@v1.6
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
