@@ -44,6 +44,8 @@ create_repository:
     - {name: 'front', color: '7DCEA0', description: 'Related to the front'}
     - {name: 'api', color: 'F1948A', description: 'Related to the API'}
     - {name: 'back', color: 'F7DC6F', description: 'Related to the back'}
+    - {name: 'env', color: '117A65', description: 'Related to .env files'}
+    - {name: 'git', color: '633974', description: 'Related to git files'}
     - {name: 'pull request', color: '16A085', description: 'A PR has been opened'}
     - {name: 'to test (internal)', color: 'D98880', description: 'To be tested (internal)'}
     - {name: 'to test (customer)', color: 'F1C40F', description: 'To be tested (customer)'}
@@ -80,6 +82,8 @@ create_repository:
     # Github actions
     - .github/workflows/sanity-check.yml
     - .github/workflows/pr-size.yml
+    - .github/workflows/labeler.yml
+    - .github/labeler.yml
   # Milestones
   milestones:
     - { title: 'Initial setup', description: "Initial setup of the environment", due_on: ~ }

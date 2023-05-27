@@ -1,0 +1,76 @@
+docker:
+    - .dockerignore
+    - Dockerfile
+    - docker-compose.yml
+    - docker-compose.dev.yml
+    - docker-compose.prod.yml
+    - docker-compose.test.yml
+    - docker-compose.override.yml
+    - docker/*
+    - docker/**/*
+
+env:
+    - .env*
+
+git:
+  - .gitignore
+  - .gitattributes
+
+dependencies:
+  - package.json
+  - package-lock.json
+  - yarn.lock
+  - composer.json
+  - composer.lock
+  - symfony.lock
+
+fixtures:
+  - fixtures/*
+  - fixtures/**/*
+
+tests:
+    - tests/*
+    - tests/**/*
+    - phpunit.xml.dist
+
+tools:
+    - tools/*
+    - tools/**/*
+
+deployment:
+    - deploy/*
+    - deploy/**/*
+
+docs:
+    - docs/*
+    - docs/**/*
+    - '*.md'
+    - '**/*.md'
+
+ci:
+  - .github/workflows/*
+  - .github/workflows/**/*
+
+migrations:
+  - migrations/*
+  - migrations/**/*
+
+front:
+  - src/**/*.js
+  - src/**/*.css
+  - assets/*
+  - assets/**/*
+  - templates/*
+  - templates/**/*
+  - public/**/*.jpg
+  - public/**/*.png
+  - public/**/*.svg
+  - public/**/*.gif
+  - public/**/*.ico
+  - public/**/*.webp
+  - webpack.config.js
+
+api:
+
+back:
+  - src/**/*.php
