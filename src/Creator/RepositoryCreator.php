@@ -157,7 +157,6 @@ readonly class RepositoryCreator
 
     private function addContributors(Repository $repository): void
     {
-        return;
         foreach ($repository->contributors as $contributor) {
             $this->client->repository()->collaborators()->add(
                 $this->configuration->user,
