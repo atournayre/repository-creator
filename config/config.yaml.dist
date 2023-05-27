@@ -58,6 +58,7 @@ config:
     - .github/ISSUE_TEMPLATE/BUG-REPORT.yml
     - .github/ISSUE_TEMPLATE/config.yml
     - .github/ISSUE_TEMPLATE/FEATURE-REQUEST.yml
+    - .github/PULL_REQUEST_TEMPLATE.md
     - docs/CONTRIBUTORS.md
     - docs/DEPLOY.md
     - docs/DEVELOP.md
