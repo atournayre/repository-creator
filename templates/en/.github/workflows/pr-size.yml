@@ -1,11 +1,11 @@
-name: Taille de PR
+name: PR size check
 
 on: [pull_request]
 
 jobs:
   labeler:
     runs-on: ubuntu-latest
-    name: Libeller la taille de la PR
+    name: Label the PR size
     steps:
       - uses: codelytv/pr-size-labeler@v1
         with:
@@ -21,8 +21,8 @@ jobs:
           xl_label: 'size/xl'
           fail_if_xl: 'false'
           message_if_xl: >
-            La taille de cette PR dépasse la limite recommandée de 1000 lignes.
-            Merci de vous assurer que vous ne traitez pas plusieurs problèmes avec une seule PR.
-            Notez que cette PR pourrait être rejetée en raison de sa taille.
+            This PR exceeds the recommended size of 1000 lines.
+            Please make sure you are NOT addressing multiple issues with one PR.
+            Note this PR might be rejected due to its size.
           github_api_url: 'api.github.com'
           files_to_ignore: ''
