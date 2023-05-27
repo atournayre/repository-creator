@@ -1,0 +1,131 @@
+reviewers:
+  # The default reviewers
+  defaults:
+    - repository-owners # group
+
+  # Reviewer groups each of which has a list of GitHub usernames
+  groups:
+    repository-owners:
+      # username
+    infra-devs:
+      # username
+    architecture-devs:
+      # username
+    frontend-devs:
+      # username
+    backend-devs:
+      # username
+
+  # Reviewers per author.
+  # Keys are reviewees, each of which has an array of reviewers.
+  per_author:
+    full_team:
+      # list all developers
+    lead_infra:
+      # username
+    lead_architecture:
+      # username
+    lead_frontend:
+      # username
+    lead_backend:
+      # username
+
+files:
+  # docker
+  '*(d|D)ocker*':
+    - lead_infra
+
+  # env
+  '.env*':
+    - lead_infra
+
+  # git
+  '.git*':
+    - lead_infra
+
+  # dependencies
+  'package*':
+    - lead_infra
+    - lead_frontend
+  '*.lock':
+    - lead_infra
+  'composer.*':
+    - lead_infra
+    - lead_backend
+
+  # fixtures
+  'fixtures/*':
+    - lead_architecture
+  'fixtures/**/*':
+    - lead_architecture
+
+  # tests
+  'tests/*':
+    - lead_architecture
+  'phpunit.xml.dist':
+    - lead_architecture
+
+  # tools
+  'tools/*':
+    - lead_infra
+
+  # deployment
+  'deploy/*':
+    - lead_infra
+
+  # docs
+  'docs/*':
+    - lead_infra
+    - full_team
+  '*.md':
+    - lead_infra
+    - full_team
+
+  # ci
+  '.github/workflows/*':
+    - lead_infra
+
+  # migrations
+  'migrations/*':
+    - lead_architecture
+
+  # front
+  '*.js':
+    - lead_frontend
+  '*.css':
+    - lead_frontend
+  'assets/*':
+    - lead_frontend
+  'templates/*':
+    - lead_frontend
+  '*.twig':
+    - lead_frontend
+  '*.jpg':
+    - lead_frontend
+  '*.png':
+    - lead_frontend
+  '*.svg':
+    - lead_frontend
+  '*.gif':
+    - lead_frontend
+  '*.ico':
+    - lead_frontend
+  '*.webp':
+    - lead_frontend
+  'webpack.config.js':
+    - lead_infra
+    - lead_frontend
+
+  # back
+  '*.php':
+    - lead_backend
+
+options:
+  ignore_draft: true
+  ignored_keywords:
+    - DO NOT REVIEW
+  enable_group_assignment: true
+
+  # If it's true, the last matching files-change pattern takes the most precedence (CODEOWNERS-compatible)
+  # See https://github.com/necojackarc/auto-request-review/pull/80 for more details.
+  last_files_match_only: false

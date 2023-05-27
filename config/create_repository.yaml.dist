@@ -84,6 +84,8 @@ create_repository:
     - .github/workflows/pr-size.yml
     - .github/workflows/labeler.yml
     - .github/labeler.yml
+    - .github/workflows/auto_request_review.yml
+    - .github/reviewers.yml
   # Milestones
   milestones:
     - { title: 'Initial setup', description: "Initial setup of the environment", due_on: ~ }
