@@ -23,6 +23,7 @@ config:
     - application
     - template
     - issues-tracker
+    - poc
   # Branches
   main_branch: ~
   develop_branch: develop
