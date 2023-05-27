@@ -3,6 +3,8 @@
 namespace App\Creator;
 
 use App\Configuration\Configuration;
+use App\DTO\File;
+use App\DTO\GitHubUrlParser;
 use App\DTO\Repository;
 use Github\AuthMethod;
 use Github\Client;
@@ -38,6 +40,14 @@ readonly class RepositoryCreator
             null,
             null,
             true
+        );
+    }
+
+    public function delete(Repository $repository): void
+    {
+        $this->client->repository()->remove(
+            $this->configuration->user,
+            $repository->getName()
         );
     }
 
@@ -78,13 +88,26 @@ readonly class RepositoryCreator
 
     private function addFiles(Repository $repository): void
     {
-        foreach ($repository->files as $file) {
+        $githubFiles = [];
+        foreach ($repository->getGithubFiles() as $file) {
+            $gitHubUrlParser = GitHubUrlParser::fromUrl($file->fullPath);
+            $content = $this->client->repository()->contents()->download(
+                $gitHubUrlParser->owner,
+                $gitHubUrlParser->repository,
+                $gitHubUrlParser->path
+            );
+            $githubFiles[$file->path] = File::create($file->path, $content);
+        }
+
+        $files = array_merge($repository->getFiles(), $githubFiles);
+
+        foreach ($files as $file) {
             $this->client->repository()->contents()->create(
                 $this->configuration->user,
                 $repository->getName(),
-                $file->getRelativePathname(),
-                $file->getContent(),
-                sprintf('Add %s file', $file->getRelativePathname()),
+                $file->path,
+                $file->content,
+                sprintf('Add %s file', $file->path),
                 $repository->defaultBranch,
             );
         }

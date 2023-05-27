@@ -75,11 +75,16 @@ class Repository
         $this->contributors[] = $contributor;
     }
 
-    public function withFile(string $name): self
+    public function withFile(string|array $name): self
     {
         $repository = clone $this;
-        $repository->addFile(File::create($name));
 
+        if (is_array($name)) {
+            $repository->addFile(File::fromUrl($name['path'], $name['url']));
+            return $repository;
+        }
+
+        $repository->addFile(File::fromPath($name));
         return $repository;
     }
 
@@ -195,5 +200,21 @@ class Repository
         $repository->organization = $organization;
 
         return $repository;
+    }
+
+    /**
+     * @return array|File[]
+     */
+    public function getFiles(): array
+    {
+        return array_filter($this->files, fn($file) => !$file->isGitHub);
+    }
+
+    /**
+     * @return array|File[]
+     */
+    public function getGithubFiles(): array
+    {
+        return array_filter($this->files, fn($file) => $file->isGitHub);
     }
 }

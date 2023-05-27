@@ -2,37 +2,43 @@
 
 namespace App\DTO;
 
-use Symfony\Component\Finder\SplFileInfo;
 use Webmozart\Assert\Assert;
 
-class File
+readonly class File
 {
-    private SplFileInfo $file;
+    public bool $isGitHub;
+    public string $fullPath;
 
-    private function __construct(string $path)
+    private function __construct(
+        public string $path,
+        public string $content,
+    )
+    {
+    }
+
+    public static function fromPath(string $path): self
     {
         $fullPath = __DIR__ . '/../../templates/' . $path;
         Assert::file($fullPath, sprintf('The file "%s" does not exist.', $path));
-        $this->file = new SplFileInfo($fullPath, $path, $path);
+        $file = new self($path, file_get_contents($fullPath));
+        $file->isGitHub = false;
+        $file->fullPath = $fullPath;
+        return $file;
     }
 
-    public static function create(string $path): self
+    public static function fromUrl(string $path, string $url): self
     {
-        return new self($path);
+        $file = new self($path, file_get_contents($url));
+        $file->isGitHub = str_contains($url, 'github.com');
+        $file->fullPath = $url;
+        return $file;
     }
 
-    public function getRelativePathname(): string
+    public static function create($path, ?string $content): self
     {
-        return $this->file->getRelativePathname();
-    }
-
-    public function getFilename(): string
-    {
-        return $this->file->getFilename();
-    }
-
-    public function getContent(): string
-    {
-        return $this->file->getContents();
+        if (null === $content) {
+            return self::fromPath($path);
+        }
+        return new self($path, $content);
     }
 }

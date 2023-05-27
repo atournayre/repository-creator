@@ -8,6 +8,7 @@ use App\DTO\Repository;
 use Github\Exception\ApiLimitExceedException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
@@ -53,11 +54,20 @@ class CreateRepositoryCommand extends Command
 
         try {
             $this->repositoryCreator->create($repository);
+
+            $output->writeln('<info>Your repository is now ready. Let\'s make something amazing! 🎉</info>');
         } catch (ApiLimitExceedException $e) {
             $output->writeln('<error>API limit exceeded, please try again later</error>');
             $output->writeln($e->getMessage());
         } catch (\Exception $e) {
-            $output->writeln([$e->getMessage(), $e->getFile(), $e->getLine(), $e->getCode()]);
+            $output->writeln([
+                '<error>Something bad happened, we couldn\'t create the repo! 😓</error>',
+                $e->getMessage(), $e->getFile(), $e->getLine(), $e->getCode(),
+            ]);
+
+            if ($input->getOption('all-or-nothing')) {
+                $this->repositoryCreator->delete($repository);
+            }
         }
 
         return Command::SUCCESS;
@@ -84,6 +94,9 @@ class CreateRepositoryCommand extends Command
     protected function configure(): void
     {
         $this->setName('create-repository')
-            ->setDescription('Create a repository');
+            ->setDescription('Create a repository')
+            ->setHelp('This command allows you to create a repository')
+            ->addOption('all-or-nothing', null, InputOption::VALUE_OPTIONAL, 'Delete the repository if the creation fails', true)
+        ;
     }
 }
