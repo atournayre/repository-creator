@@ -70,7 +70,7 @@ front:
   - public/**/*.webp
   - webpack.config.js
 
-api:
+#api:
 
 back:
   - src/**/*.php
