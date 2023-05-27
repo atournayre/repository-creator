@@ -66,6 +66,7 @@ class CreateRepositoryCommand extends Command
             ->withLabels($this->config->labels)
             ->withBranch($this->config->developBranch)
             ->withContributors($contributors)
+            ->withMilstones($this->config->milestones)
         ;
 
         $output->writeln(['<info>⏳  One moment please, your repository is being created and configured...</info>', '']);

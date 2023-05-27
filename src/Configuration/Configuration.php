@@ -31,6 +31,7 @@ readonly class Configuration
     public array $templates;
     public array $visibilities;
     public array $files;
+    public array $milestones;
 
     public function __construct()
     {
@@ -53,6 +54,7 @@ readonly class Configuration
         Assert::keyExists($config, 'files');
         Assert::keyExists($config, 'templates');
         Assert::keyExists($config, 'enable_no_template');
+        Assert::keyExists($config, 'milestones');
 
         $visibilities = [
             self::VISIBILITY_PUBLIC,
@@ -84,6 +86,7 @@ readonly class Configuration
         $this->branches = $config['branches'] ?? [];
         $this->labels = $config['labels'] ?? [];
         $this->files = $config['files'] ?? [];
+        $this->milestones = $config['milestones'] ?? [];
         $this->templates = $templates;
         $this->visibilities = $visibilities;
     }

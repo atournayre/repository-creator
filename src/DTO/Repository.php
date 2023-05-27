@@ -17,6 +17,8 @@ class Repository
     public array $branches = [];
     /** @var array|Label[] */
     public array $labels = [];
+    /** @var array|Milestone[] */
+    public array $milestones = [];
     /** @var string[] */
     public array $contributors = [];
     public readonly string $defaultBranch;
@@ -70,6 +72,11 @@ class Repository
         $this->labels[] = $label;
     }
 
+    private function addMilestone(Milestone $milestone): void
+    {
+        $this->milestones[] = $milestone;
+    }
+
     private function addContributor(string $contributor): void
     {
         $this->contributors[] = $contributor;
@@ -109,6 +116,14 @@ class Repository
     {
         $repository = clone $this;
         $repository->addLabel(Label::create($name, $color, $description));
+
+        return $repository;
+    }
+
+    public function withMilestone(string $title, ?string $description, ?string $dueOn): self
+    {
+        $repository = clone $this;
+        $repository->addMilestone(Milestone::create($title, $description, $dueOn));
 
         return $repository;
     }
@@ -198,6 +213,16 @@ class Repository
     {
         $repository = clone $this;
         $repository->organization = $organization;
+
+        return $repository;
+    }
+
+    public function withMilstones(array $milestones): self
+    {
+        $repository = clone $this;
+        foreach ($milestones as $milestone) {
+            $repository = $repository->withMilestone($milestone['title'], $milestone['description'], $milestone['due_on']);
+        }
 
         return $repository;
     }

@@ -58,6 +58,7 @@ readonly class RepositoryCreator
         $this->addBranches($repository);
         $this->addLabels($repository);
         $this->addContributors($repository);
+        $this->addMilestones($repository);
     }
 
     private function createRepository(Repository $repository): void
@@ -160,6 +161,17 @@ readonly class RepositoryCreator
                 $this->configuration->user,
                 $repository->getName(),
                 $contributor,
+            );
+        }
+    }
+
+    private function addMilestones(Repository $repository): void
+    {
+        foreach ($repository->milestones as $milestone) {
+            $this->client->issues()->milestones()->create(
+                $this->configuration->user,
+                $repository->getName(),
+                $milestone->toArray(),
             );
         }
     }
