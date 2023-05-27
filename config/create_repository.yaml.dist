@@ -77,6 +77,8 @@ create_repository:
     - CONTRIBUTING.md
     - LICENSE
     - README.md
+    # Github actions
+    - .github/workflows/sanity-check.yml
   # Milestones
   milestones:
     - { title: 'Initial setup', description: "Initial setup of the environment", due_on: ~ }
