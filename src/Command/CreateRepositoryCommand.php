@@ -148,7 +148,7 @@ class CreateRepositoryCommand extends Command
     {
         $this->setName('create')
             ->setDescription('Create a repository')
-            ->setHelp('This command allows you to create a repository')
+            ->setHelp(file_get_contents(__DIR__.'/Help/CreateRepository.txt'))
             ->addArgument('config', InputOption::VALUE_REQUIRED, 'The configuration file to use (.yaml).')
             ->addArgument('clientName', InputArgument::OPTIONAL, 'The client name')
             ->addArgument('projectName', InputArgument::OPTIONAL, 'The project name')

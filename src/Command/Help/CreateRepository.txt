@@ -1,0 +1,17 @@
+The <info>%command.name%</info> command creates a GitHub repository and initializes it.
+
+You can create a repository for a new project:
+- with a description
+- public or private
+- with a default branch
+- with files by default
+- with labels for PRs and issues
+- with contributors to invite
+- with milestones
+- with CODEOWNERS
+- with CI pre-configured
+
+You can configure lots of options using a yaml file.
+To initialize the configuration file, run the command <info>init</info>.
+
+On failure, by default, the newly created repository will be deleted. You can disable this behavior using the <info>--keep-on-failure</info> option. A delay also exists to abort.
