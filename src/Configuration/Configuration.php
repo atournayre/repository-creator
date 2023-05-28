@@ -32,6 +32,7 @@ readonly class Configuration
             public array $files,
             public array $milestones,
             public array $codeowners,
+            public array $pullRequests,
     )
     {
     }
@@ -58,6 +59,7 @@ readonly class Configuration
         Assert::keyExists($config, 'enable_no_template');
         Assert::keyExists($config, 'milestones');
         Assert::keyExists($config, 'codeowners');
+        Assert::keyExists($config, 'pull_requests');
 
         $visibilities = [
             self::VISIBILITY_PUBLIC,
@@ -94,6 +96,7 @@ readonly class Configuration
             $config['files'] ?? [],
             $config['milestones'] ?? [],
             $config['codeowners'] ?? [],
+            $config['pull_requests'] ?? [],
         );
     }
 
@@ -115,5 +118,10 @@ readonly class Configuration
                 fn($template) => $template['name'] === $templateName
             )
         )['include_all_branches'] ?? false;
+    }
+
+    public function getCiChecks(): array
+    {
+        return $this->pullRequests['ci_checks'] ?? [];
     }
 }

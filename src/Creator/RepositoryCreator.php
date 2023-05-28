@@ -215,10 +215,6 @@ readonly class RepositoryCreator
             'Add CODEOWNERS file',
             $repository->defaultBranch,
         );
-
-        // TODO si le repo est public, ajouter une règle
-        // Require a pull request before merging > Require review from Code Owners
-//        $this->client->
     }
 
     private function checkIfCodeownersFileCreationIsPossible(Codeowners $codeowners): void
@@ -236,41 +232,38 @@ readonly class RepositoryCreator
         }
     }
 
+    private function requiredStatusChecks(): ?array
+    {
+        $ciChecks = $this->configuration->getCiChecks();
+
+        if ([] === $ciChecks) {
+            return null;
+        }
+
+        return [
+            'strict' => true,
+            'contexts' => $ciChecks,
+        ];
+    }
+
     private function protectMainBranch(Repository $repository): void
     {
         $branch = $repository->defaultBranch;
 
-//        $this->client->repository()->protection()
-//            ->updateStatusChecks(
-//                $this->configuration->user,
-//                $repository->getName(),
-//                $branch,
-//                [
-//                    'strict' => true,
-//                    'contexts' => [
-//                        // TODO ajouter les checks de la CI qui doivent passer pour merger
-////                        'continuous-integration/travis-ci',
-//                    ],
-//                ]
-//            );
-
-        if ($repository->isPrivate()) {
-            return;
-        }
-
         $this->client->repository()->protection()
-            ->updatePullRequestReviewEnforcement(
+            ->update(
                 $this->configuration->user,
                 $repository->getName(),
                 $branch,
                 [
-                    'dismissal_restrictions' => [
-                        'users' => [],
-                        'teams' => [],
+                    'required_status_checks' => $this->requiredStatusChecks(),
+                    'enforce_admins' => null,
+                    'required_pull_request_reviews' => [
+                        'dismiss_stale_reviews' => true,
+                        'require_code_owner_reviews' => $repository->isPublic() || $repository->requireCodeOwnerReviews(),
+                        'required_approving_review_count' => 1,
                     ],
-                    'dismiss_stale_reviews' => true,
-                    'require_code_owner_reviews' => $repository->requireCodeOwnerReviews(),
-                    'required_approving_review_count' => 1,
+                    'restrictions' => null,
                 ]
             );
     }
