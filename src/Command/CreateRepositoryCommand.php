@@ -8,6 +8,7 @@ use App\DTO\Repository;
 use Github\Exception\ApiLimitExceedException;
 use Psr\Http\Client\ClientInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,14 +52,14 @@ class CreateRepositoryCommand extends Command
             $io->confirm('Do you want to continue?', true);
         }
 
-        $clientName = $io->ask('What is your client name?', $this->configuration->defaultClientName);
-        $projectName = $io->ask('What is your project name?', $this->configuration->defaultProjectName);
-        $projetType = self::choiceQuestion($io, 'What is your project type?', $this->configuration->projectTypes, $this->configuration->defaultProjectType);
+        $clientName = $this->askOrSkip($input, 'clientName', fn () => $io->ask('What is your client name?', $this->configuration->defaultClientName));
+        $projectName = $this->askOrSkip($input, 'projectName', fn() => $io->ask('What is your project name?', $this->configuration->defaultProjectName));
+        $projetType = $this->askOrSkip($input, 'projectType', fn() => self::choiceQuestion($io, 'What is your project type?', $this->configuration->projectTypes, $this->configuration->defaultProjectType));
         $description = $io->ask('Describe your project:', $this->configuration->defaultDescription);
-        $visibility = self::choiceQuestion($io, 'What is your project visibility?', $this->configuration->visibilities, $this->configuration->defaultVisibility);
+        $visibility = $this->askOrSkip($input, 'visibility', fn() => self::choiceQuestion($io, 'What is your project visibility?', $this->configuration->visibilities, $this->configuration->defaultVisibility));
 //        $template = $this->>questionHelper->ask($input, $output, self::choiceQuestion('Enter the template you want to use', $this->configuration->getTemplates(), $this->configuration->getDefaultTemplate()));
         $template = null;
-        $mainBranch = $io->ask('Define the main branch name', $this->configuration->mainBranch);
+        $mainBranch = $this->askOrSkip($input, 'mainBranch', fn() => $io->ask('Define the main branch name', $this->configuration->mainBranch));
         $contributors = $this->askForContributors($io);
         $enableCodeOwners = $io->askQuestion(new ConfirmationQuestion('Do you want to enable auto-request review?', true));
 
@@ -149,6 +150,11 @@ class CreateRepositoryCommand extends Command
             ->setDescription('Create a repository')
             ->setHelp('This command allows you to create a repository')
             ->addArgument('config', InputOption::VALUE_REQUIRED, 'The configuration file to use (.yaml).')
+            ->addArgument('clientName', InputArgument::OPTIONAL, 'The client name')
+            ->addArgument('projectName', InputArgument::OPTIONAL, 'The project name')
+            ->addArgument('projectType', InputArgument::OPTIONAL, 'The project type')
+            ->addArgument('visibility', InputArgument::OPTIONAL, 'The visibility')
+            ->addArgument('mainBranch', InputArgument::OPTIONAL, 'The main branch')
             ->addOption('keep-on-failure', null, InputOption::VALUE_OPTIONAL, 'Do not delete the repository if the creation fails', false)
         ;
     }
@@ -190,5 +196,14 @@ class CreateRepositoryCommand extends Command
             return;
         }
         $this->successMessages[] = $message;
+    }
+
+    private function askOrSkip(
+        InputInterface $input,
+        string $argumentName,
+        callable $ask,
+    ): string
+    {
+        return $input->getArgument($argumentName) ?? $ask();
     }
 }
