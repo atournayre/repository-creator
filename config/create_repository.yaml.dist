@@ -80,8 +80,6 @@ create_repository:
     - LICENSE
     - README.md
     # Github actions
-    - .github/workflows/sanity-check.yml
-    - .github/workflows/pr-size.yml
     - .github/workflows/labeler.yml
     - .github/labeler.yml
     - .github/reviewers.yml
