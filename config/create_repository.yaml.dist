@@ -84,7 +84,6 @@ create_repository:
     - .github/workflows/pr-size.yml
     - .github/workflows/labeler.yml
     - .github/labeler.yml
-    - .github/workflows/auto_request_review.yml
     - .github/reviewers.yml
   # Milestones
   milestones:
@@ -96,3 +95,59 @@ create_repository:
     - { title: 'Production environment', description: "Production related configuration", due_on: ~ }
     - { title: 'First version', description: 'First version for internal purposes or beta testers', due_on: ~ }
     - { title: 'Release 1.0', description: 'First release', due_on: ~ }
+  # Codeowners
+  codeowners:
+    reviewers:
+      defaults: defaut-reviewer
+      repository_owners:
+        - repository-owner
+      infra_devs:
+        - infra-devs-user
+      architecture_devs:
+        - architecture-devs-user
+      frontend_devs:
+        - frontend-devs-user
+      backend_devs:
+        - backend-devs-user
+      full_team:
+        - member-1
+        - member-2
+        - member-3
+      lead_infra:
+        - lead-infra-user
+      lead_architecture:
+        - lead-architecture-user
+      lead_frontend:
+        - lead-frontend-user
+      lead_backend:
+        - lead-backend-user
+    patterns:
+      - { pattern: 'Docker*', owners: [lead_infra] }
+      - { pattern: 'docker*', owners: [lead_infra] }
+      - { pattern: '.env*', owners: [lead_infra] }
+      - { pattern: '.git*', owners: [lead_infra] }
+      - { pattern: 'package*', owners: [lead_infra, lead_frontend] }
+      - { pattern: '*.lock', owners: [lead_infra] }
+      - { pattern: 'composer.*', owners: [lead_infra, lead_backend] }
+      - { pattern: 'fixtures/', owners: [lead_architecture] }
+      - { pattern: 'tests/', owners: [lead_architecture] }
+      - { pattern: 'phpunit.xml.dist', owners: [lead_architecture] }
+      - { pattern: 'tools/', owners: [lead_infra] }
+      - { pattern: 'deploy/', owners: [lead_infra] }
+      - { pattern: 'docs/', owners: [full_team] }
+      - { pattern: '*.md', owners: [full_team] }
+      - { pattern: '.github/workflows/', owners: [lead_infra] }
+      - { pattern: 'migrations/*', owners: [lead_architecture] }
+      - { pattern: '*.js', owners: [lead_frontend] }
+      - { pattern: '*.css', owners: [lead_frontend] }
+      - { pattern: 'assets/', owners: [lead_frontend] }
+      - { pattern: 'templates/', owners: [lead_frontend] }
+      - { pattern: '*.twig', owners: [lead_frontend] }
+      - { pattern: '*.jpg', owners: [lead_frontend] }
+      - { pattern: '*.png', owners: [lead_frontend] }
+      - { pattern: '*.svg', owners: [lead_frontend] }
+      - { pattern: '*.gif', owners: [lead_frontend] }
+      - { pattern: '*.ico', owners: [lead_frontend] }
+      - { pattern: '*.webp', owners: [lead_frontend] }
+      - { pattern: 'webpack.config.js', owners: [lead_infra, lead_frontend] }
+      - { pattern: '*.php', owners: [lead_backend] }

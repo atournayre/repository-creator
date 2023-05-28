@@ -12,10 +12,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CreateRepositoryCommand extends Command
 {
+    private array $successMessages = [
+        '<info>Congrats! Your repository is now ready.</info>',
+        'Next: Let\'s make something amazing! 🎉',
+    ];
     private Configuration $configuration;
 
     public function __construct(
@@ -55,6 +60,7 @@ class CreateRepositoryCommand extends Command
         $template = null;
         $mainBranch = $io->ask('Define the main branch name', $this->configuration->mainBranch);
         $contributors = $this->askForContributors($io);
+        $enableCodeOwners = $io->askQuestion(new ConfirmationQuestion('Do you want to enable auto-request review?', true));
 
         $organization = null;
 
@@ -71,32 +77,60 @@ class CreateRepositoryCommand extends Command
             ->withMilstones($this->configuration->milestones)
         ;
 
+        if ($enableCodeOwners) {
+            $repository = $repository->withCodeOwners($this->configuration->codeowners);
+            $this->addSuccessMessage([
+                '',
+                'Code owners are enabled',
+                'Next: Check that the CODEOWNERS file is valid on '. $repository->getCodeOwnersUrl($this->configuration->user),
+                'Then: Invite missing collaborators if needed! <comment>Manually fix any other issue.</comment>'
+            ]);
+        }
+
         $output->writeln(['<info>⏳  One moment please, your repository is being created and configured...</info>', '']);
         $repositoryCreator = RepositoryCreator::instantiate($this->httplugClient, $this->configuration);
         try {
             $repositoryCreator->create($repository);
 
-            $output->writeln([
-                '<info>Congrats! Your repository is now ready.</info>',
-                'Next: Let\'s make something amazing! 🎉',
-            ]);
+            $output->writeln($this->successMessages);
         } catch (ApiLimitExceedException $e) {
-            $output->writeln('<error>API limit exceeded, please try again later</error>');
-            $output->writeln($e->getMessage());
-        } catch (\Exception $e) {
-            $output->writeln([
-                '<error>Something bad happened, we couldn\'t create the repo! 😓</error>',
-                $e->getMessage(), $e->getFile(), $e->getLine(), $e->getCode(),
-            ]);
+            $this->outputError($io, 'API limit exceeded, please try again later', $e);
+        } catch (\Exception|\Error $e) {
+            $this->outputError($io, 'Something bad happened, we couldn\'t create the repo!', $e);
 
             if ($keepOnFailure) {
                 return Command::SUCCESS;
             }
 
+            $this->guardBeforeRepositoryDeletion($io);
             $repositoryCreator->delete($repository);
         }
 
         return Command::SUCCESS;
+    }
+
+    private function guardBeforeRepositoryDeletion(SymfonyStyle $io): void
+    {
+        $io->note('Repository will be deleted in 10 seconds... Press Ctrl+C to abort and keep the repository as is.');
+        $timeBeforeDeletion = 10;
+        $progressBar = $io->createProgressBar($timeBeforeDeletion);
+        $progressBar->start();
+        for ($i = 0; $i < $timeBeforeDeletion; $i++) {
+            $progressBar->advance();
+            sleep(1);
+        }
+        $progressBar->finish();
+    }
+
+    private function outputError(SymfonyStyle $io, string $message, \Exception|\Error $e): void
+    {
+        $io->error($message);
+        $io->writeln([
+            sprintf('<fg=red>Message:</> %s', $e->getMessage()),
+            sprintf('<fg=red>File:</> %s', $e->getFile()),
+            sprintf('<fg=red>Line:</> %s', $e->getLine()),
+            sprintf('<fg=red>Code:</> %s', $e->getCode()),
+        ]);
     }
 
     private static function choiceQuestion(
@@ -121,28 +155,40 @@ class CreateRepositoryCommand extends Command
 
     private function askForContributors(SymfonyStyle $io): array
     {
+        $displayContributorsList = function (SymfonyStyle $io, string $message, array $contributors): void {
+            $messages = ['<comment>'.$message.'</comment>'];
+            $messages = array_merge($messages, array_map(fn($contributor) => sprintf('<comment> * %s</comment>', $contributor), $contributors), ['']);
+            $io->writeln($messages);
+        };
+
         $contributors = $this->configuration->defaultContributors;
-        $io->writeln(array_merge(
-            [
-                '<comment>According to the configuration, by default, the following contributors will be invited to the repository:</comment>',
-            ],
-            array_map(fn($contributor) => sprintf('<comment> * %s</comment>', $contributor), $contributors)
-        ));
+
+        $message = $contributors === []
+            ? 'It looks like you\'re working alone on this project!'
+            : 'According to the configuration, by default, the following contributors will be invited to the repository:';
+        $displayContributorsList($io, $message, $contributors);
+
         while (true) {
             $contributor = $io
                 ->ask('Invite another contributor ? Enter the contributor username (or press <return> to stop adding contributors)');
             if (empty($contributor)) {
-                $io->writeln(array_merge(
-                    [
-                        '<comment>The following contributors will be invited to the repository:</comment>',
-                    ],
-                    array_map(fn($contributor) => sprintf('<comment> * %s</comment>', $contributor), $contributors),
-                    [''],
-                ));
+                $message = $contributors === []
+                    ? 'No contributors added!'
+                    : 'The following contributors will be invited to the repository:';
+                $displayContributorsList($io, $message, $contributors);
                 break;
             }
             $contributors[] = $contributor;
         }
         return $contributors;
+    }
+
+    private function addSuccessMessage(array|string $message): void
+    {
+        if (is_array($message)) {
+            $this->successMessages = array_merge($this->successMessages, $message);
+            return;
+        }
+        $this->successMessages[] = $message;
     }
 }

@@ -7,6 +7,9 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class Repository
 {
+    public const VISIBILITY_PUBLIC = 'public';
+    public const VISIBILITY_PRIVATE = 'private';
+
     public ?string $organization;
     public ?string $template;
     public string $description;
@@ -22,6 +25,7 @@ class Repository
     /** @var string[] */
     public array $contributors = [];
     public readonly string $defaultBranch;
+    public readonly array $codeOwners;
 
     private function __construct(
         public string $clientName,
@@ -80,6 +84,14 @@ class Repository
     private function addContributor(string $contributor): void
     {
         $this->contributors[] = $contributor;
+    }
+
+    public function withCodeOwners(array $codeOwners): self
+    {
+        $repository = clone $this;
+        $repository->codeOwners = $codeOwners;
+
+        return $repository;
     }
 
     public function withFile(string|array $name, string $locale): self
@@ -241,5 +253,30 @@ class Repository
     public function getGithubFiles(): array
     {
         return array_filter($this->files, fn($file) => $file->isGitHub);
+    }
+
+    public function getCodeOwnersUrl(string $user): string
+    {
+        return sprintf(
+            'https://github.com/%s/%s/blob/%s/.github/CODEOWNERS',
+            $user,
+            $this->getName(),
+            $this->defaultBranch
+        );
+    }
+
+    public function requireCodeOwnerReviews(): bool
+    {
+        return [] !== $this->codeOwners;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->visibility === self::VISIBILITY_PUBLIC;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->visibility === self::VISIBILITY_PRIVATE;
     }
 }

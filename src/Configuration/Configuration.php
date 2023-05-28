@@ -31,6 +31,7 @@ readonly class Configuration
             public array $visibilities,
             public array $files,
             public array $milestones,
+            public array $codeowners,
     )
     {
     }
@@ -56,6 +57,7 @@ readonly class Configuration
         Assert::keyExists($config, 'templates');
         Assert::keyExists($config, 'enable_no_template');
         Assert::keyExists($config, 'milestones');
+        Assert::keyExists($config, 'codeowners');
 
         $visibilities = [
             self::VISIBILITY_PUBLIC,
@@ -91,6 +93,7 @@ readonly class Configuration
             $visibilities,
             $config['files'] ?? [],
             $config['milestones'] ?? [],
+            $config['codeowners'] ?? [],
         );
     }
 

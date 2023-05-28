@@ -3,6 +3,7 @@
 namespace App\Creator;
 
 use App\Configuration\Configuration;
+use App\DTO\Codeowners;
 use App\DTO\File;
 use App\DTO\GitHubUrlParser;
 use App\DTO\Repository;
@@ -38,11 +39,13 @@ readonly class RepositoryCreator
         $repositoryCreator->createRepository($repository);
         $repositoryCreator->addFiles($repository);
         $repositoryCreator->addBranches($repository);
+        $repositoryCreator->protectMainBranch($repository);
         $repositoryCreator->addLabels($repository);
         $repositoryCreator->addContributors($repository);
         $repositoryCreator->addMilestones($repository);
         $repositoryCreator->enableAutomatedVulnerabilityAlerts($repository);
         $repositoryCreator->enableAutomatedSecurityFixes($repository);
+        $repositoryCreator->addCodeOwners($repository);
     }
 
     private function doCreateRepository(Repository $repository): void
@@ -197,5 +200,78 @@ readonly class RepositoryCreator
             $this->configuration->user,
             $repository->getName(),
         );
+    }
+
+    private function addCodeOwners(Repository $repository): void
+    {
+        $codeowners = Codeowners::fromArray($repository->codeOwners);
+        $this->checkIfCodeownersFileCreationIsPossible($codeowners);
+
+        $this->client->repository()->contents()->create(
+            $this->configuration->user,
+            $repository->getName(),
+            '.github/CODEOWNERS',
+            $codeowners->generateCodeowners(),
+            'Add CODEOWNERS file',
+            $repository->defaultBranch,
+        );
+
+        // TODO si le repo est public, ajouter une règle
+        // Require a pull request before merging > Require review from Code Owners
+//        $this->client->
+    }
+
+    private function checkIfCodeownersFileCreationIsPossible(Codeowners $codeowners): void
+    {
+        foreach ($codeowners->listReviewers() as $reviewer) {
+            try {
+                $this->client->user()->show($reviewer);
+            } catch (\Exception $exception) {
+                throw new \RuntimeException(
+                    sprintf('Codeowner file not created because, user %s does not exist', $reviewer),
+                    $exception->getCode(),
+                    $exception
+                );
+            }
+        }
+    }
+
+    private function protectMainBranch(Repository $repository): void
+    {
+        $branch = $repository->defaultBranch;
+
+//        $this->client->repository()->protection()
+//            ->updateStatusChecks(
+//                $this->configuration->user,
+//                $repository->getName(),
+//                $branch,
+//                [
+//                    'strict' => true,
+//                    'contexts' => [
+//                        // TODO ajouter les checks de la CI qui doivent passer pour merger
+////                        'continuous-integration/travis-ci',
+//                    ],
+//                ]
+//            );
+
+        if ($repository->isPrivate()) {
+            return;
+        }
+
+        $this->client->repository()->protection()
+            ->updatePullRequestReviewEnforcement(
+                $this->configuration->user,
+                $repository->getName(),
+                $branch,
+                [
+                    'dismissal_restrictions' => [
+                        'users' => [],
+                        'teams' => [],
+                    ],
+                    'dismiss_stale_reviews' => true,
+                    'require_code_owner_reviews' => $repository->requireCodeOwnerReviews(),
+                    'required_approving_review_count' => 1,
+                ]
+            );
     }
 }
