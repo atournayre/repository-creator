@@ -241,7 +241,7 @@ readonly class RepositoryCreator
         }
 
         return [
-            'strict' => true,
+            'strict' => false,
             'contexts' => $ciChecks,
         ];
     }
@@ -256,7 +256,7 @@ readonly class RepositoryCreator
                 $repository->getName(),
                 $branch,
                 [
-                    'required_status_checks' => $this->requiredStatusChecks(),
+                    'required_status_checks' => null,
                     'enforce_admins' => null,
                     'required_pull_request_reviews' => [
                         'dismiss_stale_reviews' => true,
