@@ -50,6 +50,15 @@ php respository-creator.phar create create_repository.yaml
 ```
 
 
+## GitHub Token Authorizations
+
+Got to https://github.com/settings/tokens
+
+Then create a "Fine-grained token" with the following authorizations:
+
+Repository permissions
+* Read access to metadata
+* Read and Write access to actions, administration, code, issues, and workflows
 ## Configuration
 
 Here is an example of the configuration file
