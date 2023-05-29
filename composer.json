@@ -32,5 +32,11 @@
     "allow-plugins": {
       "php-http/discovery": true
     }
-  }
+  },
+  "scripts": {
+    "phar": "phar-composer build"
+  },
+  "bin": [
+    "repository"
+  ]
 }
