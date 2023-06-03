@@ -97,6 +97,7 @@ create_repository:
     - { title: 'Release 1.0', description: 'First release', due_on: ~ }
   # Issues
   issues:
+    - { title: 'Send emails', file: 'send_emails.md', labels: [environment, back, env, git], milestone: 'Initial setup' }
     - { title: 'DNS Listing', file: 'dns.md', labels: [environment, waiting for customer], milestone: 'Staging environment' }
   # Codeowners
   codeowners:
