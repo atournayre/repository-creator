@@ -33,6 +33,7 @@ readonly class Configuration
             public array $milestones,
             public array $codeowners,
             public array $pullRequests,
+            public array $issues,
     )
     {
     }
@@ -60,6 +61,7 @@ readonly class Configuration
         Assert::keyExists($config, 'milestones');
         Assert::keyExists($config, 'codeowners');
         Assert::keyExists($config, 'pull_requests');
+        Assert::keyExists($config, 'issues');
 
         $visibilities = [
             self::VISIBILITY_PUBLIC,
@@ -97,6 +99,7 @@ readonly class Configuration
             $config['milestones'] ?? [],
             $config['codeowners'] ?? [],
             $config['pull_requests'] ?? [],
+            $config['issues'] ?? [],
         );
     }
 

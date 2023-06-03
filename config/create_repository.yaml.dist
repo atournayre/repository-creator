@@ -95,6 +95,9 @@ create_repository:
     - { title: 'Production environment', description: "Production related configuration", due_on: ~ }
     - { title: 'First version (release 0.0)', description: 'First version for internal purposes or beta testers', due_on: ~ }
     - { title: 'Release 1.0', description: 'First release', due_on: ~ }
+  # Issues
+  issues:
+    - { title: 'DNS Listing', file: 'dns.md', labels: [environment, waiting for customer], milestone: 'Staging environment' }
   # Codeowners
   codeowners:
     reviewers:

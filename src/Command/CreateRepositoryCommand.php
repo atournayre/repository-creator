@@ -76,6 +76,7 @@ class CreateRepositoryCommand extends Command
             ->withBranch($this->configuration->developBranch)
             ->withContributors($contributors)
             ->withMilstones($this->configuration->milestones)
+            ->withIssues($this->configuration->issues, $this->configuration->locale)
         ;
 
         if ($enableCodeOwners) {

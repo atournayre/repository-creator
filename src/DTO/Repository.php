@@ -26,6 +26,8 @@ class Repository
     public array $contributors = [];
     public readonly string $defaultBranch;
     public readonly array $codeOwners;
+    /** @var array|Issue[] */
+    public array $issues = [];
 
     private function __construct(
         public string $clientName,
@@ -84,6 +86,11 @@ class Repository
     private function addContributor(string $contributor): void
     {
         $this->contributors[] = $contributor;
+    }
+
+    private function addIssue(Issue $issue): void
+    {
+        $this->issues[] = $issue;
     }
 
     public function withCodeOwners(array $codeOwners): self
@@ -278,5 +285,40 @@ class Repository
     public function isPrivate(): bool
     {
         return $this->visibility === self::VISIBILITY_PRIVATE;
+    }
+
+    public function withIssues(array $issues, string $locale): self
+    {
+        $repository = clone $this;
+        foreach ($issues as $issue) {
+            $repository = $repository->withIssue(
+                $issue['title'],
+                $issue['file'],
+                $issue['labels'] ?? [],
+                $issue['milestone'] ?? null,
+                $locale
+            );
+        }
+
+        return $repository;
+    }
+
+    public function withIssue(
+        string $title,
+        string $file,
+        array $labels,
+        ?string $milestone,
+        string $locale
+    ): self
+    {
+        $repository = clone $this;
+
+        if (str_starts_with($file, 'http')) {
+            $repository->addIssue(Issue::fromUrl($title, $file, $labels, $milestone));
+            return $repository;
+        }
+
+        $repository->addIssue(Issue::fromPath($title, $file, $labels, $locale, $milestone));
+        return $repository;
     }
 }

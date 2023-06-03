@@ -11,13 +11,15 @@ use Github\AuthMethod;
 use Github\Client;
 use Psr\Http\Client\ClientInterface;
 
-readonly class RepositoryCreator
+class RepositoryCreator
 {
-    private Client $client;
+    private readonly Client $client;
+    private array $labels;
+    private array $milestones;
 
     private function __construct(
-        private ClientInterface $httplugClient,
-        private Configuration   $configuration,
+        private readonly ClientInterface $httplugClient,
+        private readonly Configuration   $configuration,
     )
     {
         $this->client = Client::createWithHttpClient($this->httplugClient);
@@ -40,12 +42,14 @@ readonly class RepositoryCreator
         $repositoryCreator->addFiles($repository);
         $repositoryCreator->addBranches($repository);
         $repositoryCreator->protectMainBranch($repository);
+//        $repositoryCreator->protectBranches($repository);
         $repositoryCreator->addLabels($repository);
         $repositoryCreator->addContributors($repository);
         $repositoryCreator->addMilestones($repository);
         $repositoryCreator->enableAutomatedVulnerabilityAlerts($repository);
         $repositoryCreator->enableAutomatedSecurityFixes($repository);
         $repositoryCreator->addCodeOwners($repository);
+        $repositoryCreator->addIssues($repository);
     }
 
     private function doCreateRepository(Repository $repository): void
@@ -156,10 +160,11 @@ readonly class RepositoryCreator
     private function addLabels(Repository $repository): void
     {
         foreach ($repository->labels as $label) {
-            $this->client->issue()->labels()->create(
+            $params = get_object_vars($label);
+            $this->labels[$params['name']] = $this->client->issue()->labels()->create(
                 $this->configuration->user,
                 $repository->getName(),
-                get_object_vars($label),
+                $params,
             );
         }
     }
@@ -178,11 +183,13 @@ readonly class RepositoryCreator
     private function addMilestones(Repository $repository): void
     {
         foreach ($repository->milestones as $milestone) {
-            $this->client->issues()->milestones()->create(
+            $params = $milestone->toArray();
+            $githubMilestone = $this->client->issues()->milestones()->create(
                 $this->configuration->user,
                 $repository->getName(),
-                $milestone->toArray(),
+                $params,
             );
+            $this->milestones[$milestone->title] = $githubMilestone['number'];
         }
     }
 
@@ -266,5 +273,67 @@ readonly class RepositoryCreator
                     'restrictions' => null,
                 ]
             );
+    }
+    private function protectBranches(Repository $repository): void
+    {
+        $branches = [
+            'feature',
+            'fix',
+            'hotfix',
+            'release',
+        ];
+
+        foreach ($branches as $branch) {
+            $this->client->getHttpClient()->post(
+                sprintf('/repos/%s/%s/rulesets', $this->configuration->user, $repository->getName()),
+                [
+                    'name' => null,
+                    'target' => 'branch',
+                    'enforcement' => 'active',
+                    'conditions' => [
+                        'ref_name' => [
+                            'include' => [
+                                'refs/heads/'.$branch,
+                            ]
+                        ]
+                    ],
+                    'rules' => [
+                        [
+                            'type' => 'branch_name_pattern',
+                            'parameters' => [
+                                'pattern' => $branch,
+                                'operator' => 'starts_with',
+                            ],
+                        ],
+                        [
+                            'type' => 'pull_request',
+                            'parameters' => [
+                                'dismiss_stale_reviews_on_push' => false,
+                                'require_code_owner_review' => false,
+                                'require_last_push_approval' => false,
+                                'required_approving_review_count' => 1,
+                                'required_review_thread_resolution' => false,
+                            ],
+                        ],
+                    ],
+                ],
+            );
+        }
+    }
+
+    private function addIssues(Repository $repository): void
+    {
+        foreach ($repository->issues as $issue) {
+            $this->client->issues()->create(
+                $this->configuration->user,
+                $repository->getName(),
+                array_merge(
+                    $issue->toArray(),
+                    [
+                        'milestone' => $this->milestones[$issue->milestone],
+                    ],
+                )
+            );
+        }
     }
 }
