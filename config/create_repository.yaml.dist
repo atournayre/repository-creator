@@ -93,7 +93,7 @@ create_repository:
     - { title: 'Deployment scripts', description: 'Delivery/installation scripts', due_on: ~ }
     - { title: 'Staging environment', description: "Staging related configuration", due_on: ~ }
     - { title: 'Production environment', description: "Production related configuration", due_on: ~ }
-    - { title: 'First version', description: 'First version for internal purposes or beta testers', due_on: ~ }
+    - { title: 'First version (release 0.0)', description: 'First version for internal purposes or beta testers', due_on: ~ }
     - { title: 'Release 1.0', description: 'First release', due_on: ~ }
   # Codeowners
   codeowners:
