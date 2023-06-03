@@ -99,6 +99,7 @@ create_repository:
   issues:
     - { title: 'Domain name(s)', file: 'domain_names.md', labels: [environment, waiting for customer], milestone: 'Initial setup' }
     - { title: 'Send emails', file: 'send_emails.md', labels: [environment, back, env, git], milestone: 'Initial setup' }
+    - { title: 'Fixtures', file: 'fixtures.md', labels: [fixtures], milestone: 'Fixtures' }
     - { title: 'DNS Listing', file: 'dns.md', labels: [environment, waiting for customer], milestone: 'Staging environment' }
   # Codeowners
   codeowners:
