@@ -20,20 +20,12 @@ readonly class Issue
 
     public static function fromPath(
         string $title,
-        string $path,
         array $labels,
-        string $locale,
+        string $fullPath,
         ?string $milestone = null,
     ): self
     {
-        $fullPath = sprintf('%s/../../issues/%s/%s', __DIR__, $locale, $path);
-        Assert::file($fullPath, sprintf('The file "%s" does not exist.', $path));
-        $issue = new self(
-            $title,
-            file_get_contents($fullPath),
-            $labels,
-            $milestone
-        );
+        $issue = new self($title, @file_get_contents($fullPath), $labels, $milestone);
         $issue->isGitHub = false;
         return $issue;
     }

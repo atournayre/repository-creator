@@ -2,8 +2,6 @@
 
 namespace App\DTO;
 
-use Webmozart\Assert\Assert;
-
 readonly class File
 {
     public bool $isGitHub;
@@ -16,11 +14,9 @@ readonly class File
     {
     }
 
-    public static function fromPath(string $path, string $locale): self
+    public static function fromPath(string $path, string $fullPath): self
     {
-        $fullPath = sprintf('%s/../../templates/%s/%s', __DIR__, $locale, $path);
-        Assert::file($fullPath, sprintf('The file "%s" does not exist.', $path));
-        $file = new self($path, file_get_contents($fullPath));
+        $file = new self($path, @file_get_contents($fullPath));
         $file->isGitHub = false;
         $file->fullPath = $fullPath;
         return $file;
@@ -34,10 +30,10 @@ readonly class File
         return $file;
     }
 
-    public static function create($path, string $locale, ?string $content): self
+    public static function create(string $path, string $fullPath, ?string $content): self
     {
         if (null === $content) {
-            return self::fromPath($path, $locale);
+            return self::fromPath($path, $fullPath);
         }
         return new self($path, $content);
     }

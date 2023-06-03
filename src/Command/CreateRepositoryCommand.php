@@ -65,7 +65,7 @@ class CreateRepositoryCommand extends Command
 
         $organization = null;
 
-        $repository = Repository::create($clientName, $projectName, $projetType)
+        $repository = Repository::create(getcwd(), $clientName, $projectName, $projetType)
             ->withOrganization($organization)
             ->withDescription($description)
             ->withVisibility($visibility)

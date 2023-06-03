@@ -4,6 +4,7 @@ namespace App\DTO;
 
 use App\Configuration\Configuration;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Webmozart\Assert\Assert;
 
 class Repository
 {
@@ -30,6 +31,7 @@ class Repository
     public array $issues = [];
 
     private function __construct(
+        public string $currentPath,
         public string $clientName,
         public string $projectName,
         public string $projetType
@@ -38,12 +40,15 @@ class Repository
     }
 
     public static function create(
+        string $currentPath,
         string $clientName,
         string $projectName,
         string $projetType,
     ): self
     {
+        Assert::directory($currentPath, sprintf('The directory "%s" does not exist.', $currentPath));
         return new self(
+            $currentPath,
             $clientName,
             $projectName,
             $projetType
@@ -110,7 +115,8 @@ class Repository
             return $repository;
         }
 
-        $repository->addFile(File::fromPath($name, $locale));
+        $path = sprintf('%s/templates/%s/%s', $this->currentPath, $locale, $name);
+        $repository->addFile(File::fromPath($name, $path));
         return $repository;
     }
 
@@ -318,7 +324,8 @@ class Repository
             return $repository;
         }
 
-        $repository->addIssue(Issue::fromPath($title, $file, $labels, $locale, $milestone));
+        $fullPath = sprintf('%s/issues/%s/%s', $this->currentPath, $locale, $file);
+        $repository->addIssue(Issue::fromPath($title, $labels, $fullPath, $milestone));
         return $repository;
     }
 }
