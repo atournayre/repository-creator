@@ -81,9 +81,15 @@ create_repository:
   # Issues
   issues:
     - { title: 'Domain name(s)', file: 'domain_names.md', labels: [environment, waiting for customer], milestone: 'Initial setup' }
+    - { title: 'Docker', file: 'docker.md', labels: [environment, docker, back, git, dependencies, front, api, docs], milestone: 'Initial setup' }
     - { title: 'Send emails', file: 'send_emails.md', labels: [environment, back, env, git], milestone: 'Initial setup' }
     - { title: 'Fixtures', file: 'fixtures.md', labels: [fixtures], milestone: 'Fixtures' }
     - { title: 'DNS Listing', file: 'dns.md', labels: [environment, waiting for customer], milestone: 'Staging environment' }
+    - { title: 'CORS', file: 'cors.md', labels: [back, front, api], milestone: ~ }
+    - { title: 'Deployment', file: 'deployment.md', labels: [deployment], milestone: 'Deployment scripts' }
+    - { title: 'Google Maps', file: 'google_maps.md', labels: [front, back, api], milestone: ~ }
+    - { title: 'Meilisearch', file: 'meilisearch.md', labels: [api], milestone: ~ }
+    - { title: 'Messenger', file: 'messenger.md', labels: [back], milestone: ~ }
   # Codeowners
   codeowners:
     reviewers:
