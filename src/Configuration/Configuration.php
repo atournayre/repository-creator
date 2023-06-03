@@ -58,8 +58,6 @@ readonly class Configuration
         $config = Yaml::parseFile($configFile)['create_repository'];
         $config['github_token'] = self::loadGitHubToken($configFile);
 
-        $config = Yaml::parseFile($configFile)['create_repository'];
-
         Assert::keyExists($config, 'github_token');
         Assert::notNull($config['github_token'], 'The github_token cannot be null, please set it in the config file.');
         Assert::keyExists($config, 'user');
