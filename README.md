@@ -225,6 +225,9 @@ create_repository:
 ```
 
 
+## Versionning
+It is recommended for you to create a repository and version your different config files and templates, so you can recreate new config without overwriting your previous ones (or check changes thanks to GIT).
+
 ## Contributing
 
 Contributions are always welcome!
