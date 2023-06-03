@@ -8,6 +8,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 use Webmozart\Assert\Assert;
 
 class InitCommand extends Command
@@ -17,6 +19,7 @@ class InitCommand extends Command
 
     private readonly SymfonyStyle $io;
     private readonly Filesystem $filesystem;
+    private string $currentPath;
 
     /**
      * @throws \Exception
@@ -26,14 +29,18 @@ class InitCommand extends Command
         $configFilePath = $input->getArgument('path');
         Assert::endsWith($configFilePath, '.yaml', 'The configuration file must be a YAML file (.yaml).');
 
-        $this->createConfigFile($configFilePath);
+        try {
+            $this->createConfigFile($configFilePath);
+            $this->createGitHubTokenFile($configFilePath);
+            $this->initializeIssuesFolder($input->getArgument('issuesRepository'));
+            $this->initializeFilesFolder($input->getArgument('filesRepository'));
 
-        $currentPath = realpath(dirname($configFilePath));
-
-        $this->initializeIssuesFolder($currentPath, $input->getArgument('issuesRepository'));
-        $this->initializeFilesFolder($currentPath, $input->getArgument('filesRepository'));
-
-        return Command::SUCCESS;
+            return Command::SUCCESS;
+        } catch (\Exception $e) {
+            $this->filesystem->remove($configFilePath);
+            $this->io->error($e->getMessage());
+            return Command::FAILURE;
+        }
     }
 
     private function createConfigFile(string $configFilePath): void
@@ -48,19 +55,48 @@ class InitCommand extends Command
         $this->io->error(sprintf('Configuration file could not be created at %s', $configFilePath));
     }
 
-    private function initializeIssuesFolder(string $currentPath, string $repositoryName): void
+    private function createGitHubTokenFile(string $configFilePath): void
     {
-        $this->initializeFolder($currentPath, 'issues', $repositoryName);
+        $githubTokenFile = $this->currentPath . '/config/github_token.yaml';
+
+        $configFilePathAsArray = explode('/', str_replace('.yaml', '', $configFilePath));
+        $configFileName = end($configFilePathAsArray);
+
+        try {
+            if ($this->filesystem->exists($githubTokenFile)) {
+                $yaml = Yaml::parseFile($githubTokenFile);
+                $yaml['github_token'][$configFileName] = null;
+                $this->filesystem->dumpFile($githubTokenFile, Yaml::dump($yaml));
+                $this->io->success(sprintf('GitHub Token file created at %s', $githubTokenFile));
+                return;
+            }
+
+            $yaml = Yaml::dump([
+                'github_token' => [
+                    $configFileName => null,
+                ],
+            ]);
+            $this->filesystem->dumpFile($githubTokenFile, $yaml);
+            $this->io->success(sprintf('GitHub Token file created at %s', $githubTokenFile));
+        } catch (ParseException $e) {
+            $this->io->error(sprintf('GitHub Token file could not be created at %s', $githubTokenFile));
+            $this->io->writeln($e->getMessage());
+        }
     }
 
-    private function initializeFolder(string $currentPath, string $folder, string $repositoryName): void
+    private function initializeIssuesFolder(string $repositoryName): void
     {
-        $zipName = sprintf('%s/%s-main.zip', $currentPath, $folder);
+        $this->initializeFolder( 'issues', $repositoryName);
+    }
+
+    private function initializeFolder(string $folder, string $repositoryName): void
+    {
+        $zipName = sprintf('%s/%s-main.zip', $this->currentPath, $folder);
         $this->downloadZip($zipName, $repositoryName);
-        $this->extractZip($zipName, $currentPath . \DIRECTORY_SEPARATOR);
+        $this->extractZip($zipName, $this->currentPath . \DIRECTORY_SEPARATOR);
         $this->filesystem->rename(
             explode(\DIRECTORY_SEPARATOR, $repositoryName)[1] . '-main',
-            $currentPath . \DIRECTORY_SEPARATOR . $folder,
+            $this->currentPath . \DIRECTORY_SEPARATOR . $folder,
             true
         );
         $this->filesystem->remove($zipName);
@@ -97,9 +133,9 @@ class InitCommand extends Command
         $zipArchive->close();
     }
 
-    private function initializeFilesFolder(string $currentPath, string $repositoryName): void
+    private function initializeFilesFolder(string $repositoryName): void
     {
-        $this->initializeFolder($currentPath, 'templates', $repositoryName);
+        $this->initializeFolder( 'templates', $repositoryName);
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
@@ -107,6 +143,10 @@ class InitCommand extends Command
         parent::initialize($input, $output);
         $this->io = new SymfonyStyle($input, $output);
         $this->filesystem = new Filesystem();
+
+        $getcwd = getcwd();
+        Assert::string($getcwd, 'Unable to get the current working directory.');
+        $this->currentPath = $getcwd;
     }
 
     protected function configure(): void

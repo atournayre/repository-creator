@@ -38,9 +38,25 @@ readonly class Configuration
     {
     }
 
+    private static function loadGitHubToken(string $configFile): string
+    {
+        $githubTokenYaml = dirname($configFile).'/github_token.yaml';
+        Assert::file($githubTokenYaml, 'The github_token.yaml file does not exist.');
+
+        $configFileName = str_replace([dirname($configFile).'/', '.yaml'], '', $configFile);
+
+        $githubToken = Yaml::parseFile($githubTokenYaml)['github_token'][$configFileName];
+        Assert::notNull($githubToken, sprintf('No GitHub token found for the %s configuration file.', $configFileName));
+
+        return $githubToken;
+    }
+
     public static function load(string $configFile): self
     {
         Assert::file($configFile, 'The config file does not exist.');
+
+        $config = Yaml::parseFile($configFile)['create_repository'];
+        $config['github_token'] = self::loadGitHubToken($configFile);
 
         $config = Yaml::parseFile($configFile)['create_repository'];
 
