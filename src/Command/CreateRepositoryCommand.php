@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Configuration\Configuration;
-use App\Creator\RepositoryCreator;
+use App\Creator\GithubRepositoryCreator;
 use App\DTO\Repository;
 use Github\Exception\ApiLimitExceedException;
 use Psr\Http\Client\ClientInterface;
@@ -90,9 +90,9 @@ class CreateRepositoryCommand extends Command
         }
 
         $output->writeln(['<info>⏳  One moment please, your repository is being created and configured...</info>', '']);
-        $repositoryCreator = RepositoryCreator::instantiate($this->httplugClient, $this->configuration);
+        $githubRepositoryCreator = GithubRepositoryCreator::instantiate($this->httplugClient, $this->configuration);
         try {
-            $repositoryCreator->create($repository);
+            $githubRepositoryCreator->create($repository);
 
             $output->writeln($this->successMessages);
         } catch (ApiLimitExceedException $e) {
@@ -105,7 +105,7 @@ class CreateRepositoryCommand extends Command
             }
 
             $this->guardBeforeRepositoryDeletion($io);
-            $repositoryCreator->delete($repository);
+            $githubRepositoryCreator->delete($repository);
         }
 
         return Command::SUCCESS;

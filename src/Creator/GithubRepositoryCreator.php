@@ -11,7 +11,7 @@ use Github\AuthMethod;
 use Github\Client;
 use Psr\Http\Client\ClientInterface;
 
-class RepositoryCreator
+class GithubRepositoryCreator
 {
     private readonly Client $client;
     private array $labels;
