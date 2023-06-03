@@ -255,6 +255,10 @@ class RepositoryCreator
 
     private function protectMainBranch(Repository $repository): void
     {
+        if ($repository->isPrivate()) {
+            return;
+        }
+
         $branch = $repository->defaultBranch;
 
         $this->client->repository()->protection()
@@ -274,6 +278,7 @@ class RepositoryCreator
                 ]
             );
     }
+
     private function protectBranches(Repository $repository): void
     {
         $branches = [
