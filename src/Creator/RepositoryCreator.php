@@ -335,7 +335,7 @@ class RepositoryCreator
                 array_merge(
                     $issue->toArray(),
                     [
-                        'milestone' => $this->milestones[$issue->milestone],
+                        'milestone' => $this->milestones[$issue->milestone] ?? null,
                     ],
                 )
             );
