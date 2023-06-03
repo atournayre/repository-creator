@@ -81,7 +81,7 @@ create_repository:
     - CONTRIBUTING.md
     - LICENSE
     - README.md
-    # Github actions
+    # - { path: composer.json, url: https://github.com/atournayre/symfony-skeleton/blob/master/composer.json }    # Github actions
     - .github/workflows/labeler.yml
     - .github/labeler.yml
     - .github/reviewers.yml
