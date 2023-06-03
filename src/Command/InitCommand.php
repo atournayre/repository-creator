@@ -55,11 +55,11 @@ class InitCommand extends Command
 
     private function initializeFolder(string $currentPath, string $folder, string $repositoryName): void
     {
-        $zipName = sprintf('%s/%s-master.zip', $currentPath, $folder);
+        $zipName = sprintf('%s/%s-main.zip', $currentPath, $folder);
         $this->downloadZip($zipName, $repositoryName);
         $this->extractZip($zipName, $currentPath . \DIRECTORY_SEPARATOR);
         $this->filesystem->rename(
-            explode(\DIRECTORY_SEPARATOR, $repositoryName)[1] . '-master',
+            explode(\DIRECTORY_SEPARATOR, $repositoryName)[1] . '-main',
             $currentPath . \DIRECTORY_SEPARATOR . $folder,
             true
         );
@@ -73,7 +73,7 @@ class InitCommand extends Command
 
     private function buildZipUrl(string $repositoryName): string
     {
-        return sprintf('https://github.com/%s/archive/refs/heads/master.zip', $repositoryName);
+        return sprintf('https://github.com/%s/archive/refs/heads/main.zip', $repositoryName);
     }
 
     /**
@@ -99,7 +99,7 @@ class InitCommand extends Command
 
     private function initializeFilesFolder(string $currentPath, string $repositoryName): void
     {
-        $this->initializeFolder($currentPath, 'files', $repositoryName);
+        $this->initializeFolder($currentPath, 'templates', $repositoryName);
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output): void

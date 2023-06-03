@@ -1,8 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Support Question
-    url: ~
-    about: We use GitHub issues only to discuss about bugs and new features. For this kind of questions use the dedicated channel, in general it should be a ticket on the support platform.
-  - name: Documentation Issue
-    url: ~
-    about: End-user documentation is available on the support platform. If you have a question about the documentation, please use the dedicated channel.
