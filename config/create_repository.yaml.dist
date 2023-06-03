@@ -49,6 +49,8 @@ create_repository:
     - {name: 'pull request', color: '16A085', description: 'A PR has been opened'}
     - {name: 'to test (internal)', color: 'D98880', description: 'To be tested (internal)'}
     - {name: 'to test (customer)', color: 'F1C40F', description: 'To be tested (customer)'}
+    - {name: 'waiting for customer', color: '48AF19', description: 'Waiting for a customer action'}
+    - {name: 'environment', color: 'C40F1F', description: 'Environment related (staging, production, ...)'}
   # Template
   enable_no_template: true
   templates:
