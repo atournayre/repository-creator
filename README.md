@@ -33,20 +33,23 @@ wget https://github.com/atournayre/repository-creator/releases/download/0.0.0/re
 
 ## Usage
 
-To list all the commands available.
+### To list all the commands available
 ```shell
 php respository-creator.phar list
-
 ```
-To initialize the configuration.
+### To initialize the configuration
+
+This will create a file named **create_repository.yaml** and download issues templates and files templates in the same directory as the configuration file.
+
+It is possible to specify the repository for issues templates or files templates.
+
+Once files downloaded, you can edit them or add some and reference them in the configuration file.
 ```shell
 php respository-creator.phar init create_repository.yaml
-
 ```
-To create a repository.
+### To create a repository
 ```shell
 php respository-creator.phar create create_repository.yaml
-
 ```
 
 
