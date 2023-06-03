@@ -65,7 +65,7 @@ class InitCommand extends Command
         try {
             if ($this->filesystem->exists($githubTokenFile)) {
                 $yaml = Yaml::parseFile($githubTokenFile);
-                $yaml['github_token'][$configFileName] = null;
+                $yaml['github_token'][$configFileName] = $yaml['github_token'][$configFileName] ?? null;
                 $this->filesystem->dumpFile($githubTokenFile, Yaml::dump($yaml));
                 $this->io->success(sprintf('GitHub Token file created at %s', $githubTokenFile));
                 return;
