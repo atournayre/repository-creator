@@ -6,10 +6,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
 use Webmozart\Assert\Assert;
 
 class InitCommand extends Command
@@ -30,8 +29,8 @@ class InitCommand extends Command
         Assert::endsWith($configFilePath, '.yaml', 'The configuration file must be a YAML file (.yaml).');
 
         try {
+            $this->createGitHubTokenFile();
             $this->createConfigFile($configFilePath);
-            $this->createGitHubTokenFile($configFilePath);
             $this->initializeIssuesFolder($input->getArgument('issuesRepository'));
             $this->initializeFilesFolder($input->getArgument('filesRepository'));
 
@@ -55,33 +54,23 @@ class InitCommand extends Command
         $this->io->error(sprintf('Configuration file could not be created at %s', $configFilePath));
     }
 
-    private function createGitHubTokenFile(string $configFilePath): void
+    private function createGitHubTokenFile(): void
     {
-        $githubTokenFile = $this->currentPath . '/config/github_token.yaml';
+        $githubTokenFilePath = $this->currentPath . '/config/github_token';
+        $githubTokenExists = $this->filesystem->exists($githubTokenFilePath);
 
-        $configFilePathAsArray = explode('/', str_replace('.yaml', '', $configFilePath));
-        $configFileName = end($configFilePathAsArray);
-
-        try {
-            if ($this->filesystem->exists($githubTokenFile)) {
-                $yaml = Yaml::parseFile($githubTokenFile);
-                $yaml['github_token'][$configFileName] = $yaml['github_token'][$configFileName] ?? null;
-                $this->filesystem->dumpFile($githubTokenFile, Yaml::dump($yaml));
-                $this->io->success(sprintf('GitHub Token file created at %s', $githubTokenFile));
-                return;
-            }
-
-            $yaml = Yaml::dump([
-                'github_token' => [
-                    $configFileName => null,
-                ],
-            ]);
-            $this->filesystem->dumpFile($githubTokenFile, $yaml);
-            $this->io->success(sprintf('GitHub Token file created at %s', $githubTokenFile));
-        } catch (ParseException $e) {
-            $this->io->error(sprintf('GitHub Token file could not be created at %s', $githubTokenFile));
-            $this->io->writeln($e->getMessage());
+        if ($githubTokenExists) {
+            $this->io->success(sprintf('GitHub Token file already exists at %s', $githubTokenFilePath));
+            return;
         }
+
+        $question = new Question('Please enter your GitHub token: ');
+        $question->setHidden(true);
+        $githubToken = $this->io->askQuestion($question);
+
+        $this->filesystem->remove($githubTokenFilePath);
+        $this->filesystem->touch($githubTokenFilePath);
+        $this->filesystem->appendToFile($githubTokenFilePath, $githubToken);
     }
 
     private function initializeIssuesFolder(string $repositoryName): void

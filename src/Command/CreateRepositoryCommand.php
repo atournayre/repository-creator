@@ -3,10 +3,10 @@
 namespace App\Command;
 
 use App\Configuration\Configuration;
-use App\Creator\GithubRepositoryCreator;
 use App\DTO\Repository;
+use App\Service\Github\CreateGithubRepositoryService;
+use App\Service\Github\DeleteGithubRepositoryService;
 use Github\Exception\ApiLimitExceedException;
-use Psr\Http\Client\ClientInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,7 +25,8 @@ class CreateRepositoryCommand extends Command
     private Configuration $configuration;
 
     public function __construct(
-        private readonly ClientInterface $httplugClient,
+        private readonly CreateGithubRepositoryService $createGithubRepositoryService,
+        private readonly DeleteGithubRepositoryService $deleteGithubRepositoryService,
         string                           $name = null,
     )
     {
@@ -90,9 +91,8 @@ class CreateRepositoryCommand extends Command
         }
 
         $output->writeln(['<info>⏳  One moment please, your repository is being created and configured...</info>', '']);
-        $githubRepositoryCreator = GithubRepositoryCreator::instantiate($this->httplugClient, $this->configuration);
         try {
-            $githubRepositoryCreator->create($repository);
+            ($this->createGithubRepositoryService)($this->configuration, $repository);
 
             $output->writeln($this->successMessages);
         } catch (ApiLimitExceedException $e) {
@@ -105,7 +105,7 @@ class CreateRepositoryCommand extends Command
             }
 
             $this->guardBeforeRepositoryDeletion($io);
-            $githubRepositoryCreator->delete($repository);
+            ($this->deleteGithubRepositoryService)($this->configuration, $repository);
         }
 
         return Command::SUCCESS;
