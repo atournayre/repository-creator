@@ -2,20 +2,20 @@
 
 namespace App\DTO;
 
-use Webmozart\Assert\Assert;
-
-readonly class Issue
+class Issue
 {
     public bool $isGitHub;
     public string $fullPath;
+    private ?int $milestoneNumber;
 
     private function __construct(
-        public string $title,
-        public string $content,
-        public array $labels,
-        public ?string $milestone,
+        public readonly string $title,
+        public readonly string $content,
+        public readonly array $labels,
+        public readonly ?string $milestone,
     )
     {
+        $this->milestoneNumber = null;
     }
 
     public static function fromPath(
@@ -49,6 +49,15 @@ readonly class Issue
             'title' => $this->title,
             'body' => $this->content,
             'labels' => $this->labels,
+            'milestone' => $this->milestoneNumber,
         ];
+    }
+
+    public function withMilestoneNumber(int $milestoneNumber): self
+    {
+        $issue = clone $this;
+        $issue->milestoneNumber = $milestoneNumber;
+
+        return $issue;
     }
 }

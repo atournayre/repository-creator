@@ -37,4 +37,20 @@ readonly class File
         }
         return new self($path, $content);
     }
+
+    public static function fromGithubContent(string $path, string $url, string $content): self
+    {
+        $file = new self($path, $content);
+        $file->isGitHub = true;
+        $file->fullPath = $url;
+        return $file;
+    }
+
+    public static function fromContent(string $path, string $content): self
+    {
+        $file = new self($path, $content);
+        $file->isGitHub = false;
+        $file->fullPath = '';
+        return $file;
+    }
 }

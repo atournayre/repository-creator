@@ -2,11 +2,13 @@
 
 namespace App\Configuration;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 use Webmozart\Assert\Assert;
 
 readonly class Configuration
 {
+    public const DEFAULT_GITHUB_TOKEN = 'github_pat_default_token';
     public const VISIBILITY_PUBLIC = 'public';
     public const VISIBILITY_PRIVATE = 'private';
     public const NO_TEMPLATE = 'No template';
@@ -38,17 +40,21 @@ readonly class Configuration
     {
     }
 
-    private static function loadGitHubToken(string $configFile): string
+    public static function loadGitHubToken(): string
     {
-        $githubTokenYaml = dirname($configFile).'/github_token.yaml';
-        Assert::file($githubTokenYaml, 'The github_token.yaml file does not exist.');
+        $githubTokenPath = getcwd() . '/config/github_token';
+        if (!(new Filesystem())->exists($githubTokenPath)) {
+            return self::DEFAULT_GITHUB_TOKEN;
+        }
 
-        $configFileName = str_replace([dirname($configFile).'/', '.yaml'], '', $configFile);
+        $filePath = realpath($githubTokenPath);
+        Assert::file($filePath, sprintf('The github_token file does not exist in %s.', $filePath));
 
-        $githubToken = Yaml::parseFile($githubTokenYaml)['github_token'][$configFileName];
-        Assert::notNull($githubToken, sprintf('No GitHub token found for the %s configuration file.', $configFileName));
+        $token = file_get_contents($filePath);
+        Assert::string($token, 'The github_token file must contain a string.');
+        Assert::notEmpty($token, 'The github_token file must not be empty.');
 
-        return $githubToken;
+        return $token;
     }
 
     public static function load(string $configFile): self
