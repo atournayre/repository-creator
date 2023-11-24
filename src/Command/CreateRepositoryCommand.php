@@ -56,7 +56,13 @@ class CreateRepositoryCommand extends Command
         $clientName = $this->askOrSkip($input, 'clientName', fn () => $io->ask('What is your client name?', $this->configuration->defaultClientName));
         $projectName = $this->askOrSkip($input, 'projectName', fn() => $io->ask('What is your project name?', $this->configuration->defaultProjectName));
         $projetType = $this->askOrSkip($input, 'projectType', fn() => self::choiceQuestion($io, 'What is your project type?', $this->configuration->projectTypes, $this->configuration->defaultProjectType));
-        $description = $io->ask('Describe your project', $this->configuration->defaultDescription);
+        $description = $io->ask('Describe your project', $this->configuration->defaultDescription, function (?string $answer): string {
+            if (null === $answer || empty(trim($answer))) {
+                throw new \RuntimeException('Description should not be empty');
+            }
+
+            return $answer;
+        });
         $visibility = $this->askOrSkip($input, 'visibility', fn() => self::choiceQuestion($io, 'What is your project visibility?', $this->configuration->visibilities, $this->configuration->defaultVisibility));
 //        $template = $this->>questionHelper->ask($input, $output, self::choiceQuestion('Enter the template you want to use', $this->configuration->getTemplates(), $this->configuration->getDefaultTemplate()));
         $template = null;
