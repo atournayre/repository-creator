@@ -1,2 +1,4 @@
 vendor
 composer.lock
+phar-composer.phar
+repository-creator.phar
