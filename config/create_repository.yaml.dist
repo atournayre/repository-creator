@@ -66,6 +66,9 @@ create_repository:
     - .github/workflows/labeler.yml
     - .github/labeler.yml
     - .github/reviewers.yml
+  # Folders
+  folders:
+    - src/Api
   # Milestones
   milestones:
     - { title: 'Initial setup', description: "Initial setup of the environment", due_on: ~ }
@@ -144,5 +147,5 @@ create_repository:
       - { pattern: '*.webp', owners: [lead_frontend] }
       - { pattern: 'webpack.config.js', owners: [lead_infra, lead_frontend] }
       - { pattern: '*.php', owners: [lead_backend] }
-    pull_requests:
-        ci_checks: ~
+  pull_requests:
+  ci_checks: ~

@@ -79,6 +79,7 @@ class CreateRepositoryCommand extends Command
             ->withTemplate($template)
             ->withDefaultBranch($mainBranch)
             ->withFiles($this->configuration->files, $this->configuration->locale)
+            ->withFolders($this->configuration->folders)
             ->withLabels($this->configuration->labels)
             ->withBranch($this->configuration->developBranch)
             ->withContributors($contributors)

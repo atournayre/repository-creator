@@ -29,6 +29,7 @@ class Repository
     public readonly array $codeOwners;
     /** @var array|Issue[] */
     public array $issues = [];
+    public array $folders = [];
 
     private function __construct(
         public string $currentPath,
@@ -195,6 +196,24 @@ class Repository
         $repository = clone $this;
         foreach ($files as $file) {
             $repository = $repository->withFile($file, $locale);
+        }
+
+        return $repository;
+    }
+
+    public function withFolder(string|array $name): self
+    {
+        $path = rtrim($name, '/').'/.gitkeep';
+        $repository = clone $this;
+        $repository->addFile(File::fromContent($path, ''));
+        return $repository;
+    }
+
+    public function withFolders(array $folders): self
+    {
+        $repository = clone $this;
+        foreach ($folders as $folder) {
+            $repository = $repository->withFolder($folder);
         }
 
         return $repository;

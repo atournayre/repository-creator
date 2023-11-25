@@ -36,6 +36,7 @@ readonly class Configuration
             public array $codeowners,
             public array $pullRequests,
             public array $issues,
+            public array $folders,
     )
     {
     }
@@ -76,6 +77,7 @@ readonly class Configuration
         Assert::keyExists($config, 'branches');
         Assert::keyExists($config, 'labels');
         Assert::keyExists($config, 'files');
+        Assert::keyExists($config, 'folders');
         Assert::keyExists($config, 'templates');
         Assert::keyExists($config, 'enable_no_template');
         Assert::keyExists($config, 'milestones');
@@ -120,6 +122,7 @@ readonly class Configuration
             $config['codeowners'] ?? [],
             $config['pull_requests'] ?? [],
             $config['issues'] ?? [],
+            $config['folders'] ?? [],
         );
     }
 

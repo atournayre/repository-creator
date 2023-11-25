@@ -3,6 +3,7 @@
 namespace App\Service\Github;
 
 use App\Configuration\Configuration;
+use App\DTO\File;
 use App\DTO\Repository;
 
 readonly class CreateGithubRepositoryService
@@ -17,6 +18,7 @@ readonly class CreateGithubRepositoryService
     {
         $this->createRepository($configuration, $repository);
         $this->createFiles($configuration, $repository);
+        $this->createFolders($configuration, $repository);
         $this->protectMainBranch($configuration, $repository);
         $this->githubService->createLabels($configuration->user, $repository->getName(), $repository->labels);
         $this->githubService->addContributors($configuration->user, $repository->getName(), $repository->contributors);
@@ -76,6 +78,18 @@ readonly class CreateGithubRepositoryService
                 $repository->getName(),
                 $repository->defaultBranch,
                 $file,
+            );
+        }
+    }
+
+    private function createFolders(Configuration $configuration, Repository $repository): void
+    {
+        foreach ($repository->folders as $folder) {
+            $this->githubService->createFile(
+                $configuration->user,
+                $repository->getName(),
+                $repository->defaultBranch,
+                $folder,
             );
         }
     }
