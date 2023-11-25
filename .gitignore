@@ -1,4 +1,8 @@
-vendor
+config/*.yaml
+config/github_token
+issues
+templates
 composer.lock
+vendor
 phar-composer.phar
 repository-creator.phar
