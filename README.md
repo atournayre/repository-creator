@@ -21,15 +21,13 @@ On failure, by default, the newly created repository will be deleted. You can di
 
 ## Installation
 
+Releases are located at https://github.com/atournayre/repository-creator/releases/latest
+
 Download the latest phar.
 
-Releases are located at https://github.com/atournayre/repository-creator/releases
-
-```shell
-wget https://github.com/atournayre/repository-creator/releases/download/0.0.0/repository-creator.phar
-
-```
-
+## Build a phar
+1. Install https://github.com/clue/phar-composer
+2. Run `make build-phar`
 
 ## Usage
 
@@ -59,9 +57,17 @@ Got to https://github.com/settings/tokens
 
 Then create a "Fine-grained token" with the following authorizations:
 
-Repository permissions
-* Read access to metadata
-* Read and Write access to actions, administration, code, issues, and workflows
+In section "Repository permissions"
+
+| Section        | Permission     |
+|----------------|----------------|
+| Actions        | Read and write |
+| Administration | Read and write |
+| Contents       | Read and write |
+| Issues         | Read and write |
+| Metadata       | Read only      |
+| Workflows      | Read and write |
+
 ## Configuration
 
 Here is an example of the configuration file
